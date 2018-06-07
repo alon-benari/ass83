@@ -1,0 +1,43 @@
+<div class = "user-photos" ng-repeat = "x in main.photoData">
+  <pre>
+    {{x || JSON}}
+  </pre>
+  
+  <div id = "{{x._id}}">
+    <a href="#!/singlephoto/{{x._id}}" >
+      <img src = "{{'images/'+x.file_name}}"
+      width = "50" height = "50" border = "0"  /> </a>
+
+    <!-- <img  ng-src = {{'images/'+x.file_name}}>
+    <p>creation date: {{x.date_time}}</p> -->
+    <!-- <form ng-submit = "addComment()" method = "POST" >
+      <input type="text" placeholder="enter new comment (120 chars.)" ng-model = "addComment.newComment" size = "120"><br>
+      <button  id = "{{x._id}}" type = "submit" >add new comment</button> 
+   </form> -->
+   <!-- <button  id = "{{x._id+'b'}}" ng-disabled={{main.disableIt}} ng-click = "addToFavorties()">add to favorites</button> <br>
+   favored by the following users: 
+   <div ng-repeat = "f in x.favrd_by">
+     <ul>
+       {{f.user}}
+     </ul>
+      
+    </div>  -->
+    
+    
+   <!-- <div ng-repeat = "c in x.comments">
+     <div id = "{{c.date_time}}">
+        <p  >
+       
+        {{'comment: '+c.comment}} <br>
+        {{'comment date: '+ c.date_time}} <br>
+     </p>
+     <a href="#!/users/{{c.user._id}}"> {{'comment posted by: '+c.user.first_name+' '+c.user.last_name}}</a>
+     <button ng-click = removeComment> remove comment </button>
+     </div>
+    
+   </div>
+   <br>
+  
+  </div> -->
+   
+</div>
