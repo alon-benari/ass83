@@ -1,6 +1,6 @@
 'use strict';
 
-var cs142App = angular.module('cs142App', ['ngRoute','ngFileUpload','ngMaterial','ngResource']);
+var cs142App = angular.module('cs142App', ['ngRoute','ngFileUpload','ngMaterial','ngResource','ui.bootstrap.modal']);
 
 cs142App.config(['$routeProvider',
     function ($routeProvider) {
