@@ -11,12 +11,9 @@ cs142App.controller('UserDetailController', ['$scope', '$routeParams','$resource
     console.log('UserDetail of ', userId);
     
     
-    // console.log('window.cs142models.userModel($routeParams.userId)',
-        // window.cs142models.userModel(userId));
 
-    // $scope.main.usersModel =  window.cs142models.userModel(userId)
     $scope.main.uId = userId;
-    // console.log($scope.main)
+    
     $scope.main.context = 'now scoping: ';
     //
     var userById = $resource('/user/:_id',{_id:'@id'},{action:{method:'get'}});
@@ -24,8 +21,19 @@ cs142App.controller('UserDetailController', ['$scope', '$routeParams','$resource
       console.log(usersDetails)
       
         $scope.main.usersModel = usersDetails;
+
+        $scope.showUserList()   
     });
 
+    $scope.showUserList = function(){
+      var users = $resource('/user/list',{},{'method':'get', isArray:true});
+  
+  var data = users.query(function(d){
+      $scope.main.userListModel = d;
+      console.log('userList:',$scope.main.userListModel)
+      
+  });
+}
 
     
   }]);

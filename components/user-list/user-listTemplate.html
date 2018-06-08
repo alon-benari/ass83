@@ -1,15 +1,22 @@
  
  <div class = "user-list">
     <p>
-    users list:
+    <h1>Users list</h1>:
   </p>
 <div  ng-repeat = "x in main.userListModel">
- 
   
    <li>
      <a  href= "#!/users/{{x._id}}"  >{{x.first_name +' '+x.last_name }}</a> <br>
-   </li> 
- 
+   </li> <br>
+  <p>Last login :{{x.login_date_time}}</p>
+   <br>
+  <p>Last logout :{{x.logout_date_time}}</p>
+   <br>
+
+   <p>Recently Commented: {{x.recent_comment_date_time}}</p>
+
+  
+   
   
   <!-- <pre>$routeParams = {{$routeParams}}</pre> -->
 </div>

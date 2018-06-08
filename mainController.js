@@ -119,41 +119,60 @@ cs142App.controller('MainController', ['$scope','$resource','$location','$http',
             return !!selectedPhotoFile;
         };
         
+
+        // $scope.uploadPhoto = function(){
+        //     if (!$scope.inputFileNameSelected()) {
+        //         console.error("uploadPhoto called will no selected file");
+        //         return;
+        //     }
+        //     console.log('fileSubmitted', selectedPhotoFile); // correct output
+        //    var domForm = new FormData()
+        //    domForm.append('uploadedphoto',selectedPhotoFile)
+        //    /// NOT WORKING
+        //    console.log('domform:',domForm.get('uploadedPhoto')) // making sure we got the data.
+        //    var filePost = $resource('/photos/new')
+        //    filePost.save({file:domForm},{body:domForm},function(cb){
+        //        console.log(cb)
+        //    })
+
+        // }
+
+
         // Upload the photo file selected by the user using a post request to the URL /photos/new
-        var url = '/photos/new'
-        $scope.uploadPhoto = function () {
-            if (!$scope.inputFileNameSelected()) {
-                console.error("uploadPhoto called will no selected file");
-                return;
-            }
-            console.log('fileSubmitted', selectedPhotoFile); // correct output
-           var domForm = new FormData()
-           domForm.append('uploadedphoto',selectedPhotoFile)
-           /// NOT WORKING
-           console.log('domform:',domForm.get('uploadedPhoto')) // making sure we got the data.
-           var filePost = $resource('/photos/new',{})
-           filePost.save({file:selectedPhotoFile},function(hope){
-               console.log(hope)
-           }) 
+        // var url = '/photos/new'
+        // $scope.uploadPhoto = function () {
+        //     if (!$scope.inputFileNameSelected()) {
+        //         console.error("uploadPhoto called will no selected file");
+        //         return;
+        //     }
+        //     console.log('fileSubmitted', selectedPhotoFile); // correct output
+        //    var domForm = new FormData()
+        //    domForm.append('uploadedphoto',selectedPhotoFile)
+        //    /// NOT WORKING
+        //    console.log('domform:',domForm.get('uploadedPhoto')) // making sure we got the data.
+        //    var filePost = $resource('/photos/new',{})
+        //    filePost.save({file:selectedPhotoFile},function(hope){
+        //        console.log(hope)
+        //    }) 
         
-        //    Using XMLHttpRequest instead of $http
-        // NOT WORKING, still getting undefined for file
-            // var xhr = new XMLHttpRequest
-            // xhr.open("POST", '/photos/new/', true) // the URL and an asynchronous function set to true
-            // // xhr.setRequestHeader("Content-type", "Application/json")
-            // xhr.withCredentials = true;  // headers are set automatocally
-            // xhr.onreadystatechange = function() {//Call a function when the state changes.
-            //     if(this.readyState ==4 && this.status == 200) {
-            //         $scope.data = JSON.parse(this.responseText);
-            //         $scope.$apply(function(){
-            //             $scope.main.fileDetails = $scope.data // this is where update happens
-            //         })
-            //     }
-            // }
-            // data = JSON.stringify({uploadedPhoto:selectedPhotoFile})
-            // xhr.send(domForm) // headers are set automatocally
+        // //    Using XMLHttpRequest instead of $http
+        // // NOT WORKING, still getting undefined for file
+        //     // var xhr = new XMLHttpRequest
+        //     // xhr.open("POST", '/photos/new/', true) // the URL and an asynchronous function set to true
+        //     // // xhr.setRequestHeader("Content-type", "Application/json")
+        //     // xhr.withCredentials = true;  // headers are set automatocally
+        //     // xhr.onreadystatechange = function() {//Call a function when the state changes.
+        //     //     if(this.readyState ==4 && this.status == 200) {
+        //     //         $scope.data = JSON.parse(this.responseText);
+        //     //         $scope.$apply(function(){
+        //     //             $scope.main.fileDetails = $scope.data // this is where update happens
+        //     //         })
+        //     //     }
+        //     // }
+        //     // data = JSON.stringify({uploadedPhoto:selectedPhotoFile})
+        //     // xhr.send(domForm) // headers are set automatocally
             
            
-        };
+        // };
         
     }]);

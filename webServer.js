@@ -233,7 +233,7 @@ app.post('/admin/login',function(req,res){
                 console.log('successful login:',req.session.user)
                 console.log(person._id);//
                 // update login time:
-                person.login_date_time = new  Date()//
+                person.login_date_time =   Date()//
                 person.save(function(err){//
                     if (err){
                         console.log(err)
@@ -332,7 +332,15 @@ app.get('/user/:id', function (request, response) {
                 
                 var userById = JSON.parse(JSON.stringify(user[0]));
                 delete userById.__v;
-                console.log('userById:',id)
+                delete userById._id;
+                delete userById.password;
+                delete userById.recent_comment_date_time;
+                delete userById.posted_photo_date_time;
+                delete userById.registered_date_time;
+                delete userById.login_date_time;
+                delete userById.logout_date_time;
+                delete userById.favorites;
+                // console.log('userById:',id)
                 // find the most recent photo for that use with use id 
                 Photo.find({user_id:id}).sort({date_time:-1}).limit(1).exec((err,datePhotos)=>
                     {
@@ -542,6 +550,15 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
                  if (err) {
                      console.log('err in updating');
                      res.status(500).send(err);
+                 } else { // add a time stamp to User
+                     User.findOne({_id:req.session.user_id},function(err,commentDateTime){
+                         if (!err){
+                             
+                             commentDateTime.recent_comment_date_time = Date()
+                             commentDateTime.save()
+                         }
+                     })
+
                  }
              });
         } else {
@@ -550,7 +567,11 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
     });
 });
 ///////////////////// for file uploading //////////////////////
+// app.post('/photos/new', function(req,res){
+//     console.log('inside photos new')
+//     console.log(Object.keys(req))
 
+// })
     
 
 // app.post('/photos/new', upload.single('recfile'), function(req, res) {
@@ -695,7 +716,7 @@ app.post('/removeFav/:photo_id',function(req,res){
     var photo_id = req.params.photo_id
     User.findOne({_id:req.session.user_id},function(err,fl){
         var userFlist = JSON.parse(JSON.stringify(fl.favorites))
-        console.log('userFlist',userFlist)
+        // console.log('userFlist',userFlist)
         const newFavList = userFlist.filter(obj=>obj.photo_id!==photo_id)
         console.log('The new:',newFavList)
         fl.favorites = newFavList
@@ -705,10 +726,10 @@ app.post('/removeFav/:photo_id',function(req,res){
                 console.log(err)
             } else {
                 Photo.findOne({_id:req.params.photo_id},{},function(err,getFavrdBy){
-                    console.log('getFavrdBy',getFavrdBy.favrd_by)
+                    // console.log('getFavrdBy',getFavrdBy.favrd_by)
                     var photoFavrdBy = getFavrdBy.favrd_by
                     const newFavrdByList = photoFavrdBy.filter(obj => obj.user_id != req.session.user_id) 
-                    console.log('new Favrd by list',newFavrdByList)
+                    // console.log('new Favrd by list',newFavrdByList)
                     getFavrdBy.favrd_by = newFavrdByList
                     getFavrdBy.save()
                     res.status(200).send({res:newFavList})
@@ -719,6 +740,23 @@ app.post('/removeFav/:photo_id',function(req,res){
 
     
     }) 
+
+
+app.post('/getCommentDateTime',function(res,req){
+    console.log('************ inside getCommentDateTime***********')
+    User.findOne({_id:req.session.id},{},function(err,commentDateTime){
+        if (!err) {
+             var dateTime = new Date();
+             commentDateTime.recent_comment_date_time = dateTime;
+             console.log('++++++++++++++++++commentDateTime++++++++++++++++++',commentDateTime);
+             res.status(200).send(commentDateTime)
+        } else {
+            res.status(400).send(err)
+        }
+      
+    })
+
+})
 
 
 
