@@ -1,5 +1,5 @@
 cs142App.controller('FavoritesController', ['$scope','$resource','$location',
-    function ($scope, $resource,$location,) {
+    function ($scope, $resource,$location) {
 
       console.log('from with favorties controller ')
       $scope.showFavs = function(){
@@ -27,6 +27,9 @@ cs142App.controller('FavoritesController', ['$scope','$resource','$location',
 
         })
       }
+
+      
+
       // angular bootstrap ui
       $scope.open = function() {
         $scope.showModal = true;

@@ -11,6 +11,7 @@ cs142App.controller('UserListController', ['$scope','$resource','$location',
         
         var data = users.query(function(d){
             $scope.main.userListModel = d;
+            
             console.log('userList:',$scope.main.userListModel)
             
         });

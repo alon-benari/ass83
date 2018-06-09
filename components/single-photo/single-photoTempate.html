@@ -1,17 +1,17 @@
 <div ng-repeat = "x in main.singlePhotoInstance">
 
-  <!-- <p>
+  <p>
     inside single photo
   </p>
  <pre> x:
    {{x || JSON}}
- </pre> -->
+ </pre>
  <div id = "{{x._id}}">
     <img  ng-src = {{'images/'+x.file_name}}>
     <p>creation date: {{x.date_time}}</p>
     <form ng-submit = "addComment()" method = "POST" >
       <input type="text" placeholder="enter new comment (120 chars.)" ng-model = "addComment.newComment" size = "120"><br>
-      <md-button  id = "{{x._id}}"type = "submit" >add new comment</md-button>
+      <md-button class = "btn1" id = "{{x._id}}"type = "submit" >add new comment</md-button>
    </form>
   <md-button ng-disabled="main.addToFavState" ng-click = "addToFavorties()">Add to favorites</md-button> <br>
 

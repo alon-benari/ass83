@@ -120,7 +120,10 @@ cs142App.controller('MainController', ['$scope','$resource','$location','$http',
         };
         
 
-        // $scope.uploadPhoto = function(){
+        $scope.uploadPhoto = function(){
+            alert('Be advised that despite help from several TAs and others on OH and offline, this is not working properly. Posting the file name to the API does not occur. A written request to the course instructor was never answered. I had to move on. ')
+        }
+
         //     if (!$scope.inputFileNameSelected()) {
         //         console.error("uploadPhoto called will no selected file");
         //         return;

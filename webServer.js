@@ -165,6 +165,10 @@ app.get('/user/list', function (request, response) {
                 delete el.description;
                 delete el.occupation;
                 usersStack.push(el);
+                const userFirst = usersStack.filter(Obj => Obj._id ==request.session.user_id)
+                const theRest = usersStack.filter(Obj =>Obj._id !==request.session.user_id)
+                console.log('userFirst:',userFirst)
+                usersStack = userFirst.concat(theRest)
                 console.log('usersStack:',usersStack)
                 // console.log(usersStack);
             });
@@ -233,7 +237,9 @@ app.post('/admin/login',function(req,res){
                 console.log('successful login:',req.session.user)
                 console.log(person._id);//
                 // update login time:
-                person.login_date_time =   Date()//
+                var st = new Date()
+                var vt = Date(st.setHours(st.getHours()+7))
+                person.login_date_time = String(vt.valueOf())
                 person.save(function(err){//
                     if (err){
                         console.log(err)
@@ -271,7 +277,10 @@ app.post('/admin/logout', function(req,res){
     // updating logout time for the user.
     User.findOne({_id:req.session.user_id},function(err,userInfo){
         if (!err){
-            userInfo.logout_date_time = new Date()
+            // var st = new Date().valueOf()
+            var st = new Date()
+            var vt = Date(st.setHours(st.getHours()+7))
+            userInfo.logout_date_time = String(vt.valueOf())
             userInfo.save()
         }
     })  
@@ -299,6 +308,8 @@ app.get('/singlephoto/:photo_id', function(req,res){
                var  disable = true
             }
             // console.log(singlePhotoData)
+            // Fix comment problem here
+           
             res.status(200).send({photoInfo:singlePhotoData,disable:disable})
         } else {
             res.status(404).send({err:err})
@@ -511,6 +522,7 @@ app.post('/addtofavs/:photo_id',function(req,res) {
                     var userFavListData = {
                         file_name:add2Favs.file_name,
                         photo_id:req.params.photo_id
+                       
                     }
                     console.log('userFavListData:',userFavListData)
                     var tempUserFavList  = add2UserFavList.favorites
@@ -544,7 +556,14 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
         if(!err){
             console.log('original: ',aPhoto);
             aPhoto.comments = req.body.comments;
-           
+            //
+            // Fix the Comment problem
+            //
+            User.findOne({_id:req.session.user_id},function(err,updateOwner){
+                if (!err) {
+                    console.log('COMMETING:====',updateOwner)
+                }
+            })
             console.log('The new ....',aPhoto);
              aPhoto.save(function(err){
                  if (err) {
@@ -556,6 +575,7 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
                              
                              commentDateTime.recent_comment_date_time = Date()
                              commentDateTime.save()
+                             //
                          }
                      })
 

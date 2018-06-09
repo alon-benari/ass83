@@ -1,9 +1,10 @@
 <div>
+ 
   <p>
     <h1>
       my favorites images
     </h1>
-</p>
+  </p>
     <!-- <div ng-repeat = "fav in main.favs">
       <div >
         <div  id = {{fav.photo_id}}>
@@ -16,9 +17,8 @@
       </div>
     </div> -->
 <!--  MODAL -->
-<div ng-repeat = "fav in main.favs">
+<!-- <div ng-repeat = "fav in main.favs">
     
-<!-- <button class="btn" ng-click="open()">Open Modal</button> -->
 <button class="btn" ng-click="open()"><img src = "{{'images/'+fav.file_name}}"
   width = "100" height = "100" border = "0"  />
 </button>
@@ -29,7 +29,7 @@
    </div>
    <div class="modal-body">
       <p>One of my favortie images.</p>
-      <img src = "{{'images/'+fav.file_name}}" />
+      <img ng-src = "{{'images/'+fav.file_name}}" />
     </div>
    <div class="modal-footer">
     <button class="btn btn-success" ng-click="ok()">Okay</button>
@@ -37,8 +37,67 @@
    </div>
   </div>
 </div>
-      
+  
+<!-- bootstrap -->
+<!-- <div ng-repeat = "fav in main.favs">
+  <!-- <a href="#" class="btn btn-lg btn-success" data-toggle="modal" data-target="#basicModal">
+    Click to open Modal -->
+    <!-- <a href="#" class="btn btn-lg btn-success" data-toggle="modal" data-target="{{fav.photo_id}}">
+  <img src = "{{'images/'+fav.file_name}}"
+  width = "100" height = "100" border = "0"  /> </a>
+  <md-button ng-click = "removeFav()"> remove from favs </md-button>
+  </a> -->
 
- 
+
+
+  <!-- <div class="modal fade" id="{{fav.photo_id}}" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Basic Modal </h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <img src = "{{'images/'+fav.file_name}}">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>  -->
+
+
+<div ng-repeat = "fav in main.favs">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{'#'+fav.photo_id}}"> <img src="{{'images/'+fav.file_name}}" alt="" width = "100" height = "100" border = "0" >
+    <!-- Launch demo modal -->
+    
+  </button>
+  <md-button ng-click = "removeFav()"> remove from favs </md-button>
+
+  
+  <div class="modal fade" id="{{fav.photo_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" style="width:500px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">One of my favorites</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+             <img src="{{'images/'+fav.file_name}}" alt="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+ </div>
 </div>
 

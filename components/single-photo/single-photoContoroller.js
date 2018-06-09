@@ -18,18 +18,7 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
   
     }
     $scope.showSinglePhoto()
-    // var singlePhoto = $resource('/singlephoto/:photo_id')
-    // singlePhoto.get({photo_id:sphoto_id},function(singlePhotoInstance){
-    //   $scope.main.singlePhotoInstance = singlePhotoInstance
-    //   console.log($scope.main.singlePhotoInstance)
-    //   })
-
-    // $scope.getRecentCommentDateTime = function(){
-    //   var commentDateTime = $resource('/getCommentDateTime')
-    //   commentDateTime.save({},function(addDateTime){
-    //     console.log('addDateTime',addDateTime)
-    //   })
-    // }
+   
     $scope.showUserList = function(){
       var users = $resource('/user/list',{},{'method':'get', isArray:true});
   
@@ -79,7 +68,7 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
               // make the update
                var photoToCommentOn = $resource('/commentsOfPhoto/:photo_id');
                photoToCommentOn.save({photo_id:img_id},{comments:$scope.addComment.existingComment}, function (comment){
-                //  console.log(comment);
+                 console.log("*****comment****",comment);
                  $location.path($location.path());
                  $scope.addComment.newComment = '';
                  $scope.showSinglePhoto()
