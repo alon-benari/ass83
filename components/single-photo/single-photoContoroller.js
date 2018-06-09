@@ -6,22 +6,26 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
     var sphoto_id = $routeParams.photo_id;
     console.log('photo_id is ', sphoto_id);
     //
+    //
     $scope.showSinglePhoto = function(){
-      var singlePhoto = $resource('/singlephoto/:photo_id')
-      singlePhoto.get({photo_id:sphoto_id},function(singlePhotoInstance){
-        console.log('singlePhoto:',singlePhotoInstance.photoInfo)
-        var oneImage = singlePhotoInstance
+        var singlePhoto = $resource('/singlephoto/:photo_id')
+        singlePhoto.get({photo_id:sphoto_id},function(singlePhotoInstance){
+        console.log('singlePhoto:',singlePhotoInstance)
+        var oneImage = singlePhotoInstance.photoData
         $scope.main.singlePhotoInstance = oneImage//singlePhotoInstance
         console.log($scope.main.singlePhotoInstance)
         $scope.main.addToFavState = singlePhotoInstance.disable
         })
   
     }
+    ////////
+   
+
+
     $scope.showSinglePhoto()
    
     $scope.showUserList = function(){
       var users = $resource('/user/list',{},{'method':'get', isArray:true});
-  
      var data = users.query(function(d){
       $scope.main.userListModel = d;
       console.log('userList:',$scope.main.userListModel)
@@ -29,7 +33,18 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
   });
 }
 
-
+      $scope.addComment2 = function(){
+        var img_id = this.x._id;
+        var photoToCommentOn = $resource('/commentsOfPhoto2/:photo_id');
+               photoToCommentOn.save({photo_id:img_id},{newComnt:$scope.addComment.newComment}, function (comment){
+                console.log(comment)
+               })
+               $scope.addComment.newComment = '';
+               $scope.showSinglePhoto()
+               $scope.showSinglePhoto()
+               $scope.showUserList() 
+               $scope.showUserList()
+      }
       
       $scope.addComment = function(){
         var img_id = this.x._id;
@@ -50,7 +65,7 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
              if (el.first_name.toLowerCase() === $scope.main.loggedUser.toLowerCase()){
                console.log('we have a match');
                var user = {
-                  user_id:el._id,
+                  _id:el._id,
                   first_name:el.first_name,
                   last_name:el.last_name
                };
@@ -69,10 +84,8 @@ cs142App.controller('SinglePhotoController', ['$scope', '$routeParams','$resourc
                var photoToCommentOn = $resource('/commentsOfPhoto/:photo_id');
                photoToCommentOn.save({photo_id:img_id},{comments:$scope.addComment.existingComment}, function (comment){
                  console.log("*****comment****",comment);
-                 $location.path($location.path());
                  $scope.addComment.newComment = '';
                  $scope.showSinglePhoto()
-                 $location.path()
                  $scope.showUserList() 
                });
   

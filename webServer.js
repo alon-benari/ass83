@@ -234,6 +234,8 @@ app.post('/admin/login',function(req,res){
                      console.log('we got a match pswd and user name');
                 req.session.user = person.first_name; // store user in the session.//
                 req.session.user_id = person._id // keep the id
+                req.session.first_name = person.first_name; // keep first  name
+                req.session.last_name = person.last_name    // keep last name
                 console.log('successful login:',req.session.user)
                 console.log(person._id);//
                 // update login time:
@@ -267,21 +269,21 @@ app.post('/admin/login',function(req,res){
 });
 
 app.post('/admin/logout', function(req,res){
-    // if (type(req.session.user) === "undefined"){
-    //     console.log(req.session.user)
-    //  // res.direct('index.html')
-    //  return
-    // }
+    if (typeof req.session.user === null){
+        return;
+    }
     console.log(req.session.user);
     console.log({user:req.session.user,"user_id":req.session.user_id})
     // updating logout time for the user.
     User.findOne({_id:req.session.user_id},function(err,userInfo){
-        if (!err){
+        if (!err ){
             // var st = new Date().valueOf()
             var st = new Date()
             var vt = Date(st.setHours(st.getHours()+7))
             userInfo.logout_date_time = String(vt.valueOf())
             userInfo.save()
+        } else {
+
         }
     })  
     console.log('killing session');
@@ -291,33 +293,144 @@ app.post('/admin/logout', function(req,res){
        
 });
 
-/*
-* URL /singlephoto/:photo_id
+
+/* 
+* URL /singlephoto/:photo_id version 2
 */
-app.get('/singlephoto/:photo_id', function(req,res){
+app.get('/singlephoto/:photo_id',function(req,res){
     console.log('inside singlephoto')
     console.log(req.params.photo_id)
-    Photo.findOne({_id:req.params.photo_id},function(err,singlePhotoData){
-        if (!err){
-            console.log('****favrdBy******',singlePhotoData.favrd_by)
-            var userAlreadyfavrdImage = singlePhotoData.favrd_by
+    Photo.find({_id:req.params.photo_id} ,{}, function(err, photoMetaData){
+        if (!err && photoMetaData.length>0 ){
+            //figure out if favrd_by
+            console.log('****favrdBy******',photoMetaData[0].favrd_by)
+            var userAlreadyfavrdImage = photoMetaData[0].favrd_by
             const doesUserAlreadyFavrd = userAlreadyfavrdImage.filter(Obj => Obj.user_id == req.session.user_id)
             if (doesUserAlreadyFavrd.length == 0){
                 var disable = false
             } else {
-               var  disable = true
+                var  disable = true
             }
-            // console.log(singlePhotoData)
-            // Fix comment problem here
-           
-            res.status(200).send({photoInfo:singlePhotoData,disable:disable})
-        } else {
-            res.status(404).send({err:err})
+            // 
+            var metaData = JSON.parse(JSON.stringify(photoMetaData));
+            delete metaData.__v;
+            var updatedPhotoData =[];
+            async.each(metaData,function(item,cb1){
+                var commentStack=[];
+              async.each(item.comments,function(c,cb2){
+                //   console.log(c.user_id);
+                  User.findOne({_id:c.user_id},'_id first_name last_name',function(err,fullName){
+                    if(err) {
+                        console.log(err);
+                    }else{
+                        console.log('before: ',JSON.parse(JSON.stringify(fullName)));
+                        //var firstLast = JSON.parse(JSON.stringify(fullName));
+                        var user = JSON.parse(JSON.stringify(fullName));
+                        console.log('new user: ',user);
+                        // console.log('firstLast:',typeof(firstLast));
+                        // delete firstLast.__v;
+                        var newComment = JSON.parse(JSON.stringify(c));
+                        //
+                        console.log('USER',user)
+                        newComment.user = user;
+                        delete newComment.user_id;
+                        commentStack.push(newComment);
+                        cb2();
+                    }
+                  });
+              },function(er){
+                  if(er) {console.log(er);}
+                //   console.log('commentStack: ',commentStack);
+                  var newItem = JSON.parse(JSON.stringify(item));
+                  newItem.comments = commentStack;
+                  delete newItem.__v;
+                //   console.log('item: ',newItem);
+                  updatedPhotoData.push(newItem);
+                //   console.log('innerAsync');
+                  cb1();
+              });
+            }, function(err){
+                if (err) {
+                    console.log(err);
+                } else{
+                    // console.log(updatedPhotoData);
+                    res.status(200).send({photoData:updatedPhotoData,disable:disable});
+                    console.log(updatedPhotoData.length);
+                    console.log('AllDone, almost there');
+                }
+                
+            });
+       
         }
-    })
-    // codeto return photo with id photo_id
+        else{
+            response.status(400).send({err:err});
+        }
+    });
+})
 
-});
+
+/*
+* URL /singlephoto/:photo_id  version 1
+*/
+// app.get('/singlephoto/:photo_id', function(req,res){
+//     console.log('inside singlephoto')
+//     console.log(req.params.photo_id)
+//     User.findOne({_id:req.session.user_id},function(err,userDetails){
+//         if (!err){
+//             var comntUserInfo = {
+//                 _id:userDetails._id,
+//                 first_name:userDetails.first_name,
+//                 last_name:userDetails.last_name
+//             }
+// Photo.findOne({_id:req.params.photo_id},function(err,singlePhotoData){
+//     if (!err){
+//         console.log('****favrdBy******',singlePhotoData.favrd_by)
+//         var userAlreadyfavrdImage = singlePhotoData.favrd_by
+//         const doesUserAlreadyFavrd = userAlreadyfavrdImage.filter(Obj => Obj.user_id == req.session.user_id)
+//         if (doesUserAlreadyFavrd.length == 0){
+//                var disable = false
+//         } else {
+//             var  disable = true
+//         }
+//         console.log('******contUserInfo******',comntUserInfo)
+//         console.log('****singlePhotoData*****',singlePhotoData)
+//                     // Fix comment problem here
+                   
+//         res.status(200).send({photoInfo:singlePhotoData,disable:disable})
+//         } else {
+//             res.status(404).send({err:err})
+//          }
+//         })          
+
+
+//         //    console.log('******contUserInfo******',comntUserInfo)
+//         } else {
+//             console.log('cannot read table User');
+//             return;
+//         }
+//     })
+//     // Photo.findOne({_id:req.params.photo_id},function(err,singlePhotoData){
+//     //     if (!err){
+//     //         console.log('****favrdBy******',singlePhotoData.favrd_by)
+//     //         var userAlreadyfavrdImage = singlePhotoData.favrd_by
+//     //         const doesUserAlreadyFavrd = userAlreadyfavrdImage.filter(Obj => Obj.user_id == req.session.user_id)
+//     //         if (doesUserAlreadyFavrd.length == 0){
+//     //             var disable = false
+//     //         } else {
+//     //            var  disable = true
+//     //         }
+//     //         console.log('******contUserInfo******',comntUserInfo)
+//     //         console.log('****singlePhotoData*****',singlePhotoData)
+//     //         // Fix comment problem here
+           
+//     //         res.status(200).send({photoInfo:singlePhotoData,disable:disable})
+//     //     } else {
+//     //         res.status(404).send({err:err})
+//     //     }
+//     // })
+//     // codeto return photo with id photo_id
+
+// });
 
 
 /*
@@ -468,6 +581,9 @@ app.get('/photosOfUser/:id', function (request, response) {
 });
 
 app.get('/alreadyFav',function(req,res){
+    if (req.session.user_id === 'undefined') {
+        return;
+    }
     console.log('check if already Fav')
     console.log('the userid is:',req.session.user_id)
     
@@ -543,8 +659,57 @@ app.post('/addtofavs/:photo_id',function(req,res) {
 
 })
 
+app.post('/commentsOfPhoto2/:photo_id',function(req,res){
+    if (req.session.user_id === 'undefined') {
+        return;
+    }
+    console.log('in the api');
+    var photo_id = req.params.photo_id;
+    console.log(req.params.photo_id);
+    console.log('req.body: ',req.body.newComnt);
+   
+    Photo.findOne({_id:req.params.photo_id},function(err,aPhoto){
+        if(!err){
+            var newComment = {
+                comment:req.body.newComnt,
+                user_id:req.session.user_id,
+                date_time:Date()
+            }
+            // console.log('###newComment###',newComment)
+            var commentsArray = aPhoto.comments;
+            commentsArray.push(newComment)
+            console.log('commentsArray:',commentsArray)
+            aPhoto.comments = commentsArray
+             aPhoto.save(function(err){
+                 if (err) {
+                     console.log('err in updating');
+                    //  res.status(500).send(err);
+                 } else { // add a time stamp to User
+                     User.findOne({_id:req.session.user_id},function(err,commentDateTime){
+                         if (!err){
+                            var st = new Date()
+                            var vt = Date(st.setHours(st.getHours()+7))
+                             commentDateTime.recent_comment_date_time = String(vt.valueOf())
+                             commentDateTime.save()
+                             res.status(200).status('comment added and time stamped')
+                             //
+                         }else {
+                             res.status(500).send(err)
+                         }
+                     })
+
+                 }
+             });
+        } else {
+            res.status(400).send(err);
+        }
+    });
+
+})
+
+
 app.post('/commentsOfPhoto/:photo_id', function(req, res){
-    if (req.session.user === 'undefined') {
+    if (req.session.user_id === 'undefined') {
         return;
     }
     console.log('in the api');
@@ -552,18 +717,11 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
     console.log(req.params.photo_id);
     console.log('req.body: ',req.body.comments);
     // 
+    
     Photo.findOne({_id:req.params.photo_id},function(err,aPhoto){
         if(!err){
             console.log('original: ',aPhoto);
             aPhoto.comments = req.body.comments;
-            //
-            // Fix the Comment problem
-            //
-            User.findOne({_id:req.session.user_id},function(err,updateOwner){
-                if (!err) {
-                    console.log('COMMETING:====',updateOwner)
-                }
-            })
             console.log('The new ....',aPhoto);
              aPhoto.save(function(err){
                  if (err) {
@@ -572,8 +730,9 @@ app.post('/commentsOfPhoto/:photo_id', function(req, res){
                  } else { // add a time stamp to User
                      User.findOne({_id:req.session.user_id},function(err,commentDateTime){
                          if (!err){
-                             
-                             commentDateTime.recent_comment_date_time = Date()
+                            var st = new Date()
+                            var vt = Date(st.setHours(st.getHours()+7))
+                             commentDateTime.recent_comment_date_time = String(vt.valueOf())
                              commentDateTime.save()
                              //
                          }

@@ -9,22 +9,22 @@ cs142App.controller('UserPhotosController', ['$scope', '$routeParams','$resource
     var userId = $routeParams.userId;
     //
     // var number = $routeParams.photoId
-    //
-    console.log('UserPhoto of ', $routeParams.userId);
-    
     $scope.main.context = 'Photos of: ';
-    var userPhotos = $resource('/photosOfUser/:_id',{_id:'@id'},{method:'get'});
-    userPhotos.get({_id:userId},function(userPhotoList){
-        $scope.main.photoData = userPhotoList.photoData;
-        $scope.main.loggedInId = userPhotoList.logged_id // store the _id of the logged in user
-        $scope.main.disableIt = false;
-        
-        
-        
-        
-         
    
-    });
+
+    
+    console.log('UserPhoto of ', $routeParams.userId);
+     $scope.photosOfUser = function(){
+      var userPhotos = $resource('/photosOfUser/:_id',{_id:'@id'},{method:'get'});
+          userPhotos.get({_id:userId},function(userPhotoList){
+              $scope.main.photoData = userPhotoList.photoData;
+              $scope.main.loggedInId = userPhotoList.logged_id // store the _id of the logged in user
+              $scope.main.disableIt = false;
+          });
+     }
+   
+      $scope.photosOfUser()
+
     $scope.updateButtonState = function(){
 
       var checkExist = $resource('/alreadyFav/:photo_id')
